@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrendScope — Trend intelligence</title>
+    <title>TrendScope — Cross-Platform Trend Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.150.1/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,69 +15,167 @@
     <canvas id="three-canvas" aria-hidden="true"></canvas>
 
     <div class="app-shell">
-        <aside class="sidebar" aria-label="Primary">
+        <aside class="sidebar" aria-label="Command Console">
             <div class="sidebar-brand">
                 <span class="sidebar-logo">TrendScope</span>
                 <span class="sidebar-badge">Live</span>
             </div>
+            
             <nav class="sidebar-nav">
-                <a class="nav-link" href="#panel-topics">Topics</a>
-                <a class="nav-link" href="#panel-google">Google</a>
-                <a class="nav-link" href="#panel-tv">TV</a>
+                <a class="nav-link" href="#panel-topics">Dashboard</a>
+                <a class="nav-link" href="#panel-ml-predictor">ML Predictor</a>
+                <a class="nav-link" href="#panel-google">Google Trends</a>
+                <a class="nav-link" href="#panel-tv">TV (TVMaze)</a>
                 <a class="nav-link" href="#panel-wiki">Wikipedia</a>
                 <a class="nav-link" href="#panel-hn">Hacker News</a>
                 <a class="nav-link" href="#panel-tmdb">TMDB</a>
                 <a class="nav-link" href="#panel-crypto">CoinGecko</a>
                 <a class="nav-link" href="#panel-youtube">YouTube</a>
             </nav>
+            
             <div class="sidebar-footer">
-                <p id="statusStrip" class="status-text">Checking services…</p>
-                <div id="appStatus" class="status-badge" style="display:none" role="status"></div>
+                <p class="status-text">System Status Monitor</p>
+                <div class="health-monitor">
+                    <div class="health-item">
+                        <span id="led-google" class="led-indicator active"></span>
+                        <span>Google API</span>
+                    </div>
+                    <div class="health-item">
+                        <span id="led-youtube" class="led-indicator"></span>
+                        <span>YouTube API</span>
+                    </div>
+                    <div class="health-item">
+                        <span id="led-tmdb" class="led-indicator"></span>
+                        <span>TMDB API</span>
+                    </div>
+                    <div class="health-item">
+                        <span id="led-coingecko" class="led-indicator active"></span>
+                        <span>CoinGecko</span>
+                    </div>
+                    <div class="health-item">
+                        <span id="led-wiki" class="led-indicator active"></span>
+                        <span>Wikipedia</span>
+                    </div>
+                    <div class="health-item">
+                        <span id="led-hn" class="led-indicator active"></span>
+                        <span>Hacker News</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
         <div class="main-area">
             <header class="top-header">
                 <div>
-                    <h1 class="page-title">Cross-platform trend intelligence</h1>
-                    <p class="page-lead">Monitor momentum, attention, and discovery signals in one place. Set your topics once — they drive filters and searches across sources.</p>
+                    <h1 class="page-title">Trend Intelligence Command Center</h1>
+                    <p class="page-lead">Unified cross-platform signals, predictive momentum analytics, and deep market insights at your fingertips.</p>
                 </div>
             </header>
 
             <section id="panel-topics" class="topic-hero card-elevated">
                 <div class="topic-hero-inner">
-                    <h2 class="card-title-lg">Your trend topics</h2>
-                    <p class="card-desc">Enter comma-separated keywords (e.g. <kbd>AI</kbd>, <kbd>Bitcoin</kbd>, <kbd>Climate</kbd>). These power Google &amp; YouTube queries, Wikipedia / HN filters, TMDB &amp; CoinGecko discovery, and TV show matching.</p>
-                    <label class="field-label" for="topicInput">Topics</label>
+                    <h2 class="card-title-lg">Global Control Hub</h2>
+                    <p class="card-desc">Configure your target keywords below. They sync dynamically to orchestrate search parameters, Google Trends queries, and platform-wide data collection filters.</p>
+                    <label class="field-label" for="topicInput">Search Topics</label>
                     <textarea id="topicInput" class="topic-textarea" rows="2" placeholder="AI, Machine Learning, Bitcoin, Climate Change"></textarea>
                     <div class="topic-actions">
-                        <button type="button" id="applyTopics" class="btn btn-primary">Apply &amp; refresh all</button>
-                        <button type="button" id="resetTopics" class="btn btn-ghost">Reset to defaults</button>
+                        <button type="button" id="applyTopics" class="btn btn-primary">Apply &amp; Orchestrate</button>
+                        <button type="button" id="resetTopics" class="btn btn-ghost">Reset to Defaults</button>
                     </div>
                 </div>
             </section>
 
-            <div class="dashboard-toolbar" role="toolbar" aria-label="Dashboard panels">
-                <span class="dashboard-toolbar-label">Reports</span>
-                <button type="button" id="expandAllCards" class="btn btn-sm btn-ghost">Expand all</button>
-                <button type="button" id="collapseAllCards" class="btn btn-sm btn-ghost">Collapse all</button>
+            <div class="dashboard-toolbar" role="toolbar" aria-label="Dashboard views">
+                <span class="dashboard-toolbar-label">Dashboard Utilities</span>
+                <button type="button" id="expandAllCards" class="btn btn-sm btn-ghost">Expand All Panels</button>
+                <button type="button" id="collapseAllCards" class="btn btn-sm btn-ghost">Collapse All Panels</button>
             </div>
 
             <div class="dashboard-grid">
-                <article id="panel-google" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                
+                <!-- ML Prediction Panel (Wide Card) -->
+                <article id="panel-ml-predictor" class="dash-card card-elevated dash-card-wide" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-google" id="dash-toggle-google" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-ml" id="dash-toggle-ml" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
-                            <h2 class="dash-card-title" id="dash-title-google">Google Trends</h2>
-                            <p class="dash-card-sub">Search momentum (pytrends). Uses your topics as keywords when set.</p>
+                            <h2 class="dash-card-title" id="dash-title-ml">ML Momentum Spike Predictor</h2>
+                            <p class="dash-card-sub">Calculates probability of search momentum spikes in the next snapshot window using trained Logistic Regression models.</p>
+                        </div>
+                        <div class="dash-card-tools">
+                            <button type="button" class="btn btn-sm btn-ghost" id="refreshMlPredictor">Force Retrain</button>
+                        </div>
+                    </header>
+                    <div class="dash-card-body" id="dash-body-ml" role="region" aria-labelledby="dash-title-ml">
+                        <div class="dash-card-body-inner">
+                            <div class="ml-form">
+                                <select id="mlKeywordSelect" class="fmt-select" style="flex: 1; padding: 0.6rem;"></select>
+                                <button type="button" id="runMlPredictor" class="btn btn-secondary">Calculate Spike Probability</button>
+                            </div>
+                            
+                            <div id="mlPredictionResult" class="ml-widget" style="display:none">
+                                <div class="ml-gauge-wrap">
+                                    <div class="ml-dial">
+                                        <svg class="ml-dial-svg" viewBox="0 0 140 140">
+                                            <defs>
+                                                <linearGradient id="ml-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.85" />
+                                                    <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.85" />
+                                                </linearGradient>
+                                            </defs>
+                                            <circle class="ml-dial-bg" cx="70" cy="70" r="60" />
+                                            <circle id="mlDialFill" class="ml-dial-fill" cx="70" cy="70" r="60" />
+                                        </svg>
+                                        <div class="ml-dial-value-container">
+                                            <span id="mlProbValue" class="ml-dial-number">0</span>
+                                            <span class="ml-dial-pct">%</span>
+                                            <span class="ml-dial-label">Spike Proba</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-details">
+                                    <div class="ml-desc-block">
+                                        <p id="mlDescriptionText">This model forecasts the probability of a momentum increase greater than the configured delta in the upcoming window.</p>
+                                    </div>
+                                    <div class="ml-metrics-bar-container">
+                                        <div class="ml-metric-row">
+                                            <span class="ml-metric-lbl">Analyzed Keyword</span>
+                                            <span id="mlKeywordVal" class="ml-metric-val">—</span>
+                                        </div>
+                                        <div class="ml-metric-row">
+                                            <span class="ml-metric-lbl">Delta (Spike Threshold)</span>
+                                            <span id="mlDeltaVal" class="ml-metric-val">—</span>
+                                        </div>
+                                        <div class="ml-metric-row">
+                                            <span class="ml-metric-lbl">Trained Model Binary</span>
+                                            <span id="mlModelVal" class="ml-metric-val model-file">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="mlPredictorMessage" class="panel-hint" style="margin-top: 0;">
+                                Select a keyword and click calculate to check predictions.
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Google Trends Card -->
+                <article id="panel-google" class="dash-card card-elevated" data-dashboard-card>
+                    <header class="dash-card-head">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-google" id="dash-toggle-google" title="Expand or collapse panel">
+                            <span class="dash-card-toggle-icon" aria-hidden="true"></span>
+                        </button>
+                        <div class="dash-card-head-text">
+                            <h2 class="dash-card-title" id="dash-title-google">Google Search Momentum</h2>
+                            <p class="dash-card-sub">Interest trends via pytrends. Auto-syncs to your topics.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
-                            <select class="fmt-select" data-panel="google" title="Chart format">
+                            <select class="fmt-select" data-panel="google" title="Format selector">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -85,50 +183,48 @@
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-google" role="region" aria-labelledby="dash-title-google">
-                    <div class="dash-card-body-inner">
-                    <div class="dash-controls">
-                        <label><span>Preset</span><select id="googlePreset"></select></label>
-                        <label><span>Timeframe</span><select id="googleTimeframe">
-                            <option value="now 1-d">1 day</option>
-                            <option value="now 7-d" selected>7 days</option>
-                            <option value="today 1-m">This month</option>
-                            <option value="today 12-m">12 months</option>
-                            <option value="all">All time</option>
-                        </select></label>
-                        <label><span>Region</span><select id="googleGeo">
-                            <option value="">Worldwide</option>
-                            <option value="US">US</option>
-                            <option value="GB">UK</option>
-                            <option value="IN">India</option>
-                            <option value="CA">Canada</option>
-                            <option value="AU">Australia</option>
-                        </select></label>
-                        <button type="button" id="googleApply" class="btn btn-sm btn-primary">Run</button>
-                    </div>
-                    <p id="hint-google" class="panel-hint" hidden></p>
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="google"><canvas id="googleChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="google"></div>
-                    </div>
-                    <div id="googleGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <div class="dash-controls">
+                                <label><span>Preset</span><select id="googlePreset"></select></label>
+                                <label><span>Timeframe</span><select id="googleTimeframe">
+                                    <option value="now 1-d">1 day</option>
+                                    <option value="now 7-d" selected>7 days</option>
+                                    <option value="today 1-m">This month</option>
+                                    <option value="today 12-m">12 months</option>
+                                </select></label>
+                                <label><span>Region</span><select id="googleGeo">
+                                    <option value="">Worldwide</option>
+                                    <option value="US">US</option>
+                                    <option value="GB">UK</option>
+                                    <option value="IN">India</option>
+                                </select></label>
+                                <button type="button" id="googleApply" class="btn btn-sm btn-secondary">Apply</button>
+                            </div>
+                            <p id="hint-google" class="panel-hint" hidden></p>
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="google"><canvas id="googleChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="google"></div>
+                            </div>
+                            <div id="googleGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article id="panel-tv" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                <!-- TV trends Card -->
+                <article id="panel-tv" class="dash-card card-elevated" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-tv" id="dash-toggle-tv" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-tv" id="dash-toggle-tv" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
                             <h2 class="dash-card-title" id="dash-title-tv">TV (TVMaze)</h2>
-                            <p class="dash-card-sub">Popular shows; filtered by your topics when they match titles.</p>
+                            <p class="dash-card-sub">Top popular shows; filtered by your active topics.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
                             <select class="fmt-select" data-panel="tv">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -136,30 +232,31 @@
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-tv" role="region" aria-labelledby="dash-title-tv">
-                    <div class="dash-card-body-inner">
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="tv"><canvas id="tvChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="tv"></div>
-                    </div>
-                    <div id="tvGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="tv"><canvas id="tvChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="tv"></div>
+                            </div>
+                            <div id="tvGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article id="panel-wiki" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                <!-- Wikipedia Pageviews Card -->
+                <article id="panel-wiki" class="dash-card card-elevated" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-wiki" id="dash-toggle-wiki" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-wiki" id="dash-toggle-wiki" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
-                            <h2 class="dash-card-title" id="dash-title-wiki">Wikipedia</h2>
-                            <p class="dash-card-sub">Daily top articles (English). Topics narrow the list by title match.</p>
+                            <h2 class="dash-card-title" id="dash-title-wiki">Wikipedia attention</h2>
+                            <p class="dash-card-sub">Daily top articles (English); filtered by topic matches.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
                             <select class="fmt-select" data-panel="wiki">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -167,31 +264,32 @@
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-wiki" role="region" aria-labelledby="dash-title-wiki">
-                    <div class="dash-card-body-inner">
-                    <p id="hint-wiki" class="panel-hint" hidden></p>
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="wiki"><canvas id="wikiChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="wiki"></div>
-                    </div>
-                    <div id="wikiGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <p id="hint-wiki" class="panel-hint" hidden></p>
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="wiki"><canvas id="wikiChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="wiki"></div>
+                            </div>
+                            <div id="wikiGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article id="panel-hn" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                <!-- Hacker News Card -->
+                <article id="panel-hn" class="dash-card card-elevated" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-hn" id="dash-toggle-hn" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-hn" id="dash-toggle-hn" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
                             <h2 class="dash-card-title" id="dash-title-hn">Hacker News</h2>
-                            <p class="dash-card-sub">Top stories; topics filter headlines.</p>
+                            <p class="dash-card-sub">Top stories; titles filtered against configured topics.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
                             <select class="fmt-select" data-panel="hn">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -199,30 +297,31 @@
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-hn" role="region" aria-labelledby="dash-title-hn">
-                    <div class="dash-card-body-inner">
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="hn"><canvas id="hnChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="hn"></div>
-                    </div>
-                    <div id="hnGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="hn"><canvas id="hnChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="hn"></div>
+                            </div>
+                            <div id="hnGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article id="panel-tmdb" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                <!-- TMDB Card -->
+                <article id="panel-tmdb" class="dash-card card-elevated" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-tmdb" id="dash-toggle-tmdb" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-tmdb" id="dash-toggle-tmdb" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
-                            <h2 class="dash-card-title" id="dash-title-tmdb">TMDB</h2>
-                            <p class="dash-card-sub">Trending plus search per topic. Requires <code>TMDB_API_KEY</code> in <code>.env</code>.</p>
+                            <h2 class="dash-card-title" id="dash-title-tmdb">TMDB Entertainment</h2>
+                            <p class="dash-card-sub">Trending titles + keyword searches. Needs TMDB key.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
                             <select class="fmt-select" data-panel="tmdb">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -230,38 +329,39 @@
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-tmdb" role="region" aria-labelledby="dash-title-tmdb">
-                    <div class="dash-card-body-inner">
-                    <div class="dash-controls">
-                        <label><span>Media</span><select id="tmdbKind">
-                            <option value="movie" selected>Movies</option>
-                            <option value="tv">TV</option>
-                        </select></label>
-                        <button type="button" id="tmdbApply" class="btn btn-sm btn-primary">Apply</button>
-                    </div>
-                    <p id="hint-tmdb" class="panel-hint" hidden></p>
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="tmdb"><canvas id="tmdbChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="tmdb"></div>
-                    </div>
-                    <div id="tmdbGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <div class="dash-controls">
+                                <label><span>Media</span><select id="tmdbKind">
+                                    <option value="movie" selected>Movies</option>
+                                    <option value="tv">TV Shows</option>
+                                </select></label>
+                                <button type="button" id="tmdbApply" class="btn btn-sm btn-secondary">Apply</button>
+                            </div>
+                            <p id="hint-tmdb" class="panel-hint" hidden></p>
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="tmdb"><canvas id="tmdbChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="tmdb"></div>
+                            </div>
+                            <div id="tmdbGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article id="panel-crypto" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                <!-- CoinGecko Card -->
+                <article id="panel-crypto" class="dash-card card-elevated" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-crypto" id="dash-toggle-crypto" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-crypto" id="dash-toggle-crypto" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
-                            <h2 class="dash-card-title" id="dash-title-crypto">CoinGecko</h2>
-                            <p class="dash-card-sub">Trending plus coin search for each topic.</p>
+                            <h2 class="dash-card-title" id="dash-title-crypto">CoinGecko Market Trends</h2>
+                            <p class="dash-card-sub">Trending tokens &amp; search indexes for selected crypto topics.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
                             <select class="fmt-select" data-panel="crypto">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -269,31 +369,32 @@
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-crypto" role="region" aria-labelledby="dash-title-crypto">
-                    <div class="dash-card-body-inner">
-                    <p id="hint-crypto" class="panel-hint" hidden></p>
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="crypto"><canvas id="cryptoChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="crypto"></div>
-                    </div>
-                    <div id="cryptoGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <p id="hint-crypto" class="panel-hint" hidden></p>
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="crypto"><canvas id="cryptoChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="crypto"></div>
+                            </div>
+                            <div id="cryptoGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article id="panel-youtube" class="dash-card card-elevated is-collapsed" data-dashboard-card>
+                <!-- YouTube Card -->
+                <article id="panel-youtube" class="dash-card card-elevated" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-youtube" id="dash-toggle-youtube" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-youtube" id="dash-toggle-youtube" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
-                            <h2 class="dash-card-title" id="dash-title-youtube">YouTube</h2>
-                            <p class="dash-card-sub">Regional chart or search. Set <code>YOUTUBE_API_KEY</code>. Search uses your topics as keywords.</p>
+                            <h2 class="dash-card-title" id="dash-title-youtube">YouTube Trends</h2>
+                            <p class="dash-card-sub">Trending streams &amp; search videos. Needs YouTube key.</p>
                         </div>
                         <div class="dash-card-tools">
                             <label class="tool-label">View</label>
                             <select class="fmt-select" data-panel="yt">
                                 <option value="bar">Bar</option>
-                                <option value="hbar">Horizontal bar</option>
+                                <option value="hbar" selected>H-Bar</option>
                                 <option value="doughnut">Donut</option>
                                 <option value="table">Table</option>
                             </select>
@@ -302,52 +403,53 @@
                     </header>
                     <p id="hint-youtube" class="panel-hint dash-card-hint-below-head" hidden></p>
                     <div class="dash-card-body" id="dash-body-youtube" role="region" aria-labelledby="dash-title-youtube">
-                    <div class="dash-card-body-inner">
-                    <div class="dash-controls">
-                        <label><span>Mode</span><select id="ytMode">
-                            <option value="trending" selected>Most popular (regional)</option>
-                            <option value="search">Search (your topics)</option>
-                        </select></label>
-                        <label><span>Region</span><select id="ytRegion">
-                            <option value="US" selected>US</option>
-                            <option value="GB">GB</option>
-                            <option value="IN">IN</option>
-                            <option value="CA">CA</option>
-                            <option value="AU">AU</option>
-                            <option value="JP">JP</option>
-                        </select></label>
-                        <label id="ytPresetWrap"><span>Preset fallback</span><select id="ytPreset"></select></label>
-                        <button type="button" id="ytApply" class="btn btn-sm btn-primary">Apply</button>
-                    </div>
-                    <div class="viz-row">
-                        <div class="chart-wrap" data-chart-wrap="yt"><canvas id="ytChart" height="200"></canvas></div>
-                        <div class="table-wrap hidden" data-table-wrap="yt"></div>
-                    </div>
-                    <div id="ytGrid" class="card-grid"></div>
-                    </div>
+                        <div class="dash-card-body-inner">
+                            <div class="dash-controls">
+                                <label><span>Mode</span><select id="ytMode">
+                                    <option value="trending" selected>Most Popular</option>
+                                    <option value="search">Search Topics</option>
+                                </select></label>
+                                <label><span>Region</span><select id="ytRegion">
+                                    <option value="US" selected>US</option>
+                                    <option value="GB">GB</option>
+                                    <option value="IN">IN</option>
+                                    <option value="CA">CA</option>
+                                    <option value="AU">AU</option>
+                                </select></label>
+                                <label id="ytPresetWrap"><span>Preset Fallback</span><select id="ytPreset"></select></label>
+                                <button type="button" id="ytApply" class="btn btn-sm btn-secondary">Apply</button>
+                            </div>
+                            <div class="viz-row">
+                                <div class="chart-wrap" data-chart-wrap="yt"><canvas id="ytChart" height="200"></canvas></div>
+                                <div class="table-wrap hidden" data-table-wrap="yt"></div>
+                            </div>
+                            <div id="ytGrid" class="card-grid"></div>
+                        </div>
                     </div>
                 </article>
 
-                <article class="dash-card card-elevated dash-card-wide is-collapsed" data-dashboard-card>
+                <!-- Future Platforms Card (Wide) -->
+                <article class="dash-card card-elevated dash-card-wide" data-dashboard-card>
                     <header class="dash-card-head">
-                        <button type="button" class="dash-card-toggle" aria-expanded="false" aria-controls="dash-body-more" id="dash-toggle-more" title="Expand or collapse panel">
+                        <button type="button" class="dash-card-toggle" aria-expanded="true" aria-controls="dash-body-more" id="dash-toggle-more" title="Expand or collapse panel">
                             <span class="dash-card-toggle-icon" aria-hidden="true"></span>
                         </button>
                         <div class="dash-card-head-text">
-                            <h2 class="dash-card-title" id="dash-title-more">More platforms</h2>
-                            <p class="dash-card-sub">Twitter, Reddit, and Instagram need API keys or provider approval. Scrapers live under <code>src/scraping/</code>.</p>
+                            <h2 class="dash-card-title" id="dash-title-more">System Integration Hub (API Nodes)</h2>
+                            <p class="dash-card-sub">Twitter, Reddit, and Instagram require authorization credentials. Scrapers configured under <code>src/scraping/</code>.</p>
                         </div>
                     </header>
                     <div class="dash-card-body" id="dash-body-more" role="region" aria-labelledby="dash-title-more">
                         <div class="dash-card-body-inner">
-                            <p class="dash-card-sub dash-card-body-note">Enable credentials in <code>.env</code> and wire routes in <code>src/api/main.py</code> when you are ready to expose additional sources.</p>
+                            <p class="dash-card-sub dash-card-body-note" style="margin-top:0.5rem">Set platform credentials in <code>.env</code> and register additional route handlers in <code>src/api/main.py</code> when you are ready to configure these streams.</p>
                         </div>
                     </div>
                 </article>
             </div>
 
             <footer class="site-footer">
-                <p>FastAPI · Pandas · Chart.js · Three.js · Wikimedia · TMDB · CoinGecko · Google · YouTube · TVMaze</p>
+                <p>© 2026 TrendScope Enterprise · Powered by FastAPI &amp; PyTrends</p>
+                <p>FastAPI · Pandas · Chart.js · Three.js · TMDB · CoinGecko · TVMaze</p>
             </footer>
         </div>
     </div>

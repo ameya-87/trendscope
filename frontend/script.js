@@ -2,7 +2,8 @@
   const TOPICS_KEY = "trendscope_topics";
   const DEFAULT_TOPICS = "AI, Machine Learning, Bitcoin, Climate Change";
 
-  const palette = ["#a855f7", "#22d3ee", "#f472b6", "#fbbf24", "#34d399", "#60a5fa", "#c084fc", "#2dd4bf"];
+  // Modern Cyberpunk color palette matching CSS variables
+  const palette = ["#8b5cf6", "#06b6d4", "#ec4899", "#10b981", "#f97316", "#3b82f6", "#a855f7", "#14b8a6"];
 
   const chartText = {
     color: "#94a3b8",
@@ -13,18 +14,18 @@
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: { color: "#94a3b8", font: { size: 11 } },
+        labels: { color: chartText.color, font: { family: "Outfit", size: 11 } },
       },
     },
     scales: {
       x: {
-        ticks: { color: chartText.color, maxRotation: 45, minRotation: 0 },
-        grid: { color: "rgba(148,163,184,0.08)" },
+        ticks: { color: chartText.color, font: { family: "Plus Jakarta Sans" }, maxRotation: 45, minRotation: 0 },
+        grid: { color: "rgba(255, 255, 255, 0.04)" },
       },
       y: {
         beginAtZero: true,
-        ticks: { color: chartText.color },
-        grid: { color: "rgba(148,163,184,0.08)" },
+        ticks: { color: chartText.color, font: { family: "Plus Jakarta Sans" } },
+        grid: { color: "rgba(255, 255, 255, 0.04)" },
       },
     },
   };
@@ -61,14 +62,6 @@
     } catch (_) {}
   }
 
-  function setAppStatus(msg, ok) {
-    const el = document.getElementById("appStatus");
-    if (!el) return;
-    el.style.display = "inline-block";
-    el.textContent = msg;
-    el.className = "status-badge " + (ok ? "ok" : "error");
-  }
-
   function setHint(id, text) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -94,7 +87,7 @@
 
   function getFormat(panel) {
     const sel = document.querySelector(`.fmt-select[data-panel="${panel}"]`);
-    return sel && sel.value ? sel.value : "bar";
+    return sel && sel.value ? sel.value : "hbar";
   }
 
   function toggleVizPanel(panel, format) {
@@ -141,13 +134,13 @@
         type: "doughnut",
         data: {
           labels: L,
-          datasets: [{ data: V, backgroundColor: C, borderWidth: 0 }],
+          datasets: [{ data: V, backgroundColor: C, borderWidth: 1, borderColor: "rgba(0,0,0,0.3)" }],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: "right", labels: { color: "#94a3b8", boxWidth: 12, font: { size: 10 } } },
+            legend: { position: "right", labels: { color: chartText.color, boxWidth: 10, font: { family: "Plus Jakarta Sans", size: 10 } } },
           },
         },
       });
@@ -160,7 +153,8 @@
       label: datasetLabel,
       data: V,
       backgroundColor: C,
-      borderRadius: 4,
+      borderRadius: 6,
+      borderWidth: 0,
     };
 
     const opts = JSON.parse(JSON.stringify(chartDefaults));
@@ -183,7 +177,7 @@
     if (!wrapEl) return;
     wrapEl.innerHTML = "";
     if (!rows || !rows.length) {
-      wrapEl.innerHTML = '<p class="empty" style="margin:0;padding:1rem">No rows.</p>';
+      wrapEl.innerHTML = '<p class="empty" style="margin:0;padding:1.5rem">No records found.</p>';
       return;
     }
     const table = document.createElement("table");
@@ -229,7 +223,7 @@
         if (tableSpec && tableSpec.columns) {
           renderTable(tw, tableSpec.columns, tableSpec.rows || []);
         } else {
-          tw.innerHTML = '<p class="empty" style="margin:0;padding:1rem">No data.</p>';
+          tw.innerHTML = '<p class="empty" style="margin:0;padding:1.5rem">No data available.</p>';
         }
       }
       return;
@@ -243,7 +237,7 @@
     if (!rows || !rows.length) {
       const empty = document.createElement("div");
       empty.className = "empty";
-      empty.textContent = "No data for this source.";
+      empty.textContent = "No data cards for this source.";
       container.appendChild(empty);
       return;
     }
@@ -259,7 +253,7 @@
       if (type === "google") {
         metaTxt = `Momentum: ${typeof r.momentum === "number" ? r.momentum : "—"} | Latest: ${r.latest_value != null ? r.latest_value : "—"}`;
       } else if (type === "wiki") {
-        metaTxt = `Views: ${r.views != null ? r.views : "—"}`;
+        metaTxt = `Views: ${r.views != null ? Number(r.views).toLocaleString() : "—"}`;
       } else if (type === "hn") {
         metaTxt = `Score: ${r.score != null ? r.score : "—"}`;
       } else if (type === "tmdb") {
@@ -267,7 +261,7 @@
       } else if (type === "crypto") {
         metaTxt = [r.symbol, r.rank != null ? `Rank ${r.rank}` : ""].filter(Boolean).join(" · ");
       } else if (type === "youtube") {
-        metaTxt = `Views: ${r.views != null ? r.views : "—"}`;
+        metaTxt = `Views: ${r.views != null ? Number(r.views).toLocaleString() : "—"}`;
       } else if (type === "tv") {
         metaTxt =
           r.rating != null
@@ -283,7 +277,7 @@
       } else if (type === "tmdb") {
         desc.textContent = (r.overview || "").slice(0, 140);
       } else if (type === "google") {
-        desc.textContent = r.trend_direction ? `Trend: ${r.trend_direction}` : "";
+        desc.textContent = r.trend_direction ? `Trend Direction: ${r.trend_direction}` : "";
       }
       card.appendChild(title);
       card.appendChild(meta);
@@ -295,28 +289,51 @@
         a.target = "_blank";
         a.rel = "noopener";
         a.className = "card-link";
-        a.textContent = "Open";
+        a.textContent = "Open Link ↗";
         card.appendChild(a);
       }
       container.appendChild(card);
     });
   }
 
+  // Synchronize Sidebar Status Console LEDs
   async function loadStatus() {
-    const strip = document.getElementById("statusStrip");
     try {
       const res = await fetch("/api/status");
       apiStatus = await res.json();
-      if (strip) {
-        strip.textContent = [
-          apiStatus.youtube_configured ? "YouTube ready" : "YouTube: add key",
-          apiStatus.tmdb_configured ? "TMDB ready" : "TMDB: add key",
-        ].join(" · ");
+      
+      const ledYt = document.getElementById("led-youtube");
+      const ledTmdb = document.getElementById("led-tmdb");
+      const ledWiki = document.getElementById("led-wiki");
+      const ledHn = document.getElementById("led-hn");
+      const ledCrypto = document.getElementById("led-coingecko");
+      const ledGoogle = document.getElementById("led-google");
+      
+      if (ledYt) {
+        ledYt.className = "led-indicator " + (apiStatus.youtube_configured ? "active" : "inactive");
       }
+      if (ledTmdb) {
+        ledTmdb.className = "led-indicator " + (apiStatus.tmdb_configured ? "active" : "inactive");
+      }
+      if (ledWiki) {
+        ledWiki.className = "led-indicator " + (apiStatus.wikipedia_enabled ? "active" : "inactive");
+      }
+      if (ledHn) {
+        ledHn.className = "led-indicator " + (apiStatus.hackernews_enabled ? "active" : "inactive");
+      }
+      if (ledCrypto) {
+        ledCrypto.className = "led-indicator " + (apiStatus.coingecko_enabled ? "active" : "inactive");
+      }
+      if (ledGoogle) {
+        ledGoogle.className = "led-indicator active";
+      }
+
       setHint("hint-tmdb", apiStatus.tmdb_configured ? "" : "Set TMDB_API_KEY in your .env file to load movies and TV.");
       setHint("hint-youtube", apiStatus.youtube_configured ? "" : "Set YOUTUBE_API_KEY in your .env for charts and search.");
     } catch {
-      if (strip) strip.textContent = "Status unavailable";
+      document.querySelectorAll(".led-indicator").forEach((led) => {
+        led.className = "led-indicator inactive";
+      });
     }
   }
 
@@ -348,6 +365,97 @@
     wrap.style.display = mode.value === "search" ? "" : "none";
   }
 
+  // ML Predictor Keywords dropdown sync
+  function updateMlKeywords() {
+    const select = document.getElementById("mlKeywordSelect");
+    if (!select) return;
+    select.innerHTML = "";
+    
+    const topics = getTopicsRaw();
+    const list = topics ? topics.split(",") : DEFAULT_TOPICS.split(",");
+    
+    list.forEach((item) => {
+      const kw = item.trim();
+      if (!kw) return;
+      const opt = document.createElement("option");
+      opt.value = kw;
+      opt.textContent = kw;
+      select.appendChild(opt);
+    });
+  }
+
+  async function runPrediction() {
+    const select = document.getElementById("mlKeywordSelect");
+    const resultDiv = document.getElementById("mlPredictionResult");
+    const msgDiv = document.getElementById("mlPredictorMessage");
+    
+    if (!select || !select.value) return;
+    
+    const kw = select.value.trim();
+    const runBtn = document.getElementById("runMlPredictor");
+    if (runBtn) {
+      runBtn.disabled = true;
+      runBtn.textContent = "Calculating Signal...";
+    }
+    
+    try {
+      const res = await fetch(`/api/predictions/google_spike?keyword=${encodeURIComponent(kw)}&delta=1.0`);
+      const data = await res.json();
+      
+      if (runBtn) {
+        runBtn.disabled = false;
+        runBtn.textContent = "Calculate Spike Probability";
+      }
+      
+      if (data.error) {
+        if (resultDiv) resultDiv.style.display = "none";
+        if (msgDiv) {
+          msgDiv.style.display = "block";
+          msgDiv.innerHTML = `⚠️ <strong>Model Error:</strong> ${data.error}<br><span style="font-size:0.8rem;opacity:0.8">Ensure the baseline predictor has been trained for this keyword. Run: <code>python -m src.ml.train_google_spike --keywords "${kw}"</code></span>`;
+        }
+        return;
+      }
+      
+      // Success
+      if (msgDiv) msgDiv.style.display = "none";
+      if (resultDiv) resultDiv.style.display = "grid";
+      
+      const prob = data.spike_probability != null ? data.spike_probability : 0.0;
+      const pct = Math.round(prob * 100);
+      
+      const fill = document.getElementById("mlDialFill");
+      const probVal = document.getElementById("mlProbValue");
+      const kwVal = document.getElementById("mlKeywordVal");
+      const deltaVal = document.getElementById("mlDeltaVal");
+      const modelVal = document.getElementById("mlModelVal");
+      
+      if (probVal) probVal.textContent = pct;
+      if (kwVal) kwVal.textContent = data.keyword || kw;
+      if (deltaVal) deltaVal.textContent = data.delta != null ? data.delta.toFixed(1) : "1.0";
+      if (modelVal) {
+        const file = data.model_path ? data.model_path.split(/[\\/]/).pop() : "google_spike_model.joblib";
+        modelVal.textContent = file;
+        modelVal.title = data.model_path || "";
+      }
+      
+      if (fill) {
+        // SVG circle radius is 60, circumference is 377
+        const offset = 377 - (377 * pct) / 100;
+        fill.style.strokeDashoffset = offset;
+      }
+    } catch (e) {
+      if (runBtn) {
+        runBtn.disabled = false;
+        runBtn.textContent = "Calculate Spike Probability";
+      }
+      if (resultDiv) resultDiv.style.display = "none";
+      if (msgDiv) {
+        msgDiv.style.display = "block";
+        msgDiv.textContent = "Prediction endpoint returned an invalid response. Ensure backend server is running.";
+      }
+    }
+  }
+
   async function loadGoogle() {
     const preset = document.getElementById("googlePreset")?.value || "";
     const timeframe = document.getElementById("googleTimeframe")?.value || "now 7-d";
@@ -362,29 +470,26 @@
         destroyChart("google");
         renderViz("google", fmt, [], [], "Momentum", null);
         renderGrid(document.getElementById("googleGrid"), [], "google");
-        setAppStatus("Google: no data", false);
         return;
       }
       const labels = rows.map((r) => String(r.keyword || ""));
       const values = rows.map((r) => (typeof r.momentum === "number" ? r.momentum : 0));
       const colors = rows.map((r) =>
-        r.trend_direction === "up" ? "#34d399" : r.trend_direction === "down" ? "#f87171" : "#64748b"
+        r.trend_direction === "up" ? "#10b981" : r.trend_direction === "down" ? "#ef4444" : "#64748b"
       );
       renderViz("google", fmt, labels, values, "Momentum", {
         rows,
         columns: [
           { label: "Topic", key: "keyword" },
           { label: "Momentum", key: "momentum" },
-          { label: "Latest", key: "latest_value" },
+          { label: "Latest Value", key: "latest_value" },
           { label: "Direction", key: "trend_direction" },
         ],
         colors,
       });
       renderGrid(document.getElementById("googleGrid"), rows, "google");
-      setAppStatus("Connected", true);
     } catch {
       renderGrid(document.getElementById("googleGrid"), [], "google");
-      setAppStatus("Error", false);
     }
   }
 
@@ -416,7 +521,7 @@
         columns: [
           { label: "Title", key: "keyword" },
           { label: lab, key: "metric" },
-          { label: "Open", key: "keyword", link: "linkout" },
+          { label: "Official Site", key: "keyword", link: "linkout" },
         ],
       });
       renderGrid(document.getElementById("tvGrid"), rows, "tv");
@@ -432,7 +537,7 @@
       const rows = await res.json();
       setHint("hint-wiki", "");
       if (!Array.isArray(rows) || !rows.length) {
-        setHint("hint-wiki", "No Wikipedia data returned. Check your network or try again later.");
+        setHint("hint-wiki", "No Wikipedia articles matched current filters.");
         destroyChart("wiki");
         toggleVizPanel("wiki", fmt);
         renderGrid(document.getElementById("wikiGrid"), [], "wiki");
@@ -513,7 +618,7 @@
           { label: "Title", key: "keyword" },
           { label: "Rating", key: "rating" },
           { label: "Votes", key: "votes" },
-          { label: "TMDB", key: "keyword", link: "url" },
+          { label: "TMDB Page", key: "keyword", link: "url" },
         ],
       });
       renderGrid(document.getElementById("tmdbGrid"), rows, "tmdb");
@@ -529,7 +634,7 @@
       const rows = await res.json();
       setHint("hint-crypto", "");
       if (!Array.isArray(rows) || !rows.length) {
-        setHint("hint-crypto", "CoinGecko returned no data (rate limit or network). Retry in a minute.");
+        setHint("hint-crypto", "CoinGecko returned no data (rate limit or network).");
         destroyChart("crypto");
         toggleVizPanel("crypto", fmt);
         renderGrid(document.getElementById("cryptoGrid"), [], "crypto");
@@ -544,12 +649,12 @@
           { label: "Name", key: "keyword" },
           { label: "Symbol", key: "symbol" },
           { label: "Rank", key: "rank" },
-          { label: "Link", key: "keyword", link: "url" },
+          { label: "Info Link", key: "keyword", link: "url" },
         ],
       });
       renderGrid(document.getElementById("cryptoGrid"), rows, "crypto");
     } catch {
-      setHint("hint-crypto", "CoinGecko request failed.");
+      setHint("hint-crypto", "CoinGecko API is offline.");
       renderGrid(document.getElementById("cryptoGrid"), [], "crypto");
     }
   }
@@ -562,7 +667,6 @@
     const fmt = getFormat("yt");
     const topics = getTopicsRaw();
     if (!apiStatus.youtube_configured) {
-      setHint("hint-youtube", "Set YOUTUBE_API_KEY in .env (project root) and restart the server.");
       destroyChart("yt");
       toggleVizPanel("yt", fmt);
       renderGrid(document.getElementById("ytGrid"), [], "youtube");
@@ -586,7 +690,7 @@
         data = {};
       }
       if (!res.ok) {
-        const msg = formatFetchErrorPayload(data) || `YouTube request failed (${res.status}).`;
+        const msg = formatFetchErrorPayload(data) || `YouTube request failed.`;
         setHint("hint-youtube", msg);
         destroyChart("yt");
         toggleVizPanel("yt", fmt);
@@ -600,17 +704,8 @@
         destroyChart("yt");
         toggleVizPanel("yt", fmt);
         renderGrid(document.getElementById("ytGrid"), [], "youtube");
-        if (!apiErr) {
-          setHint(
-            "hint-youtube",
-            mode === "search"
-              ? "No videos returned for these keywords in the last 30 days. Switch to Most popular, change topics, or check the server terminal for API errors."
-              : "No trending videos returned for this region (quota, API error, or key restrictions—see message above if any)."
-          );
-        }
         return;
       }
-      setHint("hint-youtube", "");
       const top = rows.slice(0, 12);
       const labels = top.map((r) => String(r.keyword || r.title || "").slice(0, 22));
       const values = top.map((r) => Number(r.views || 0));
@@ -620,19 +715,20 @@
           { label: "Title", key: "keyword" },
           { label: "Views", key: "views" },
           { label: "Channel", key: "author" },
-          { label: "Watch", key: "keyword", link: "url" },
+          { label: "Watch Video", key: "keyword", link: "url" },
         ],
       });
       renderGrid(document.getElementById("ytGrid"), rows, "youtube");
       window.setTimeout(resizeVisibleCharts, 100);
     } catch {
-      setHint("hint-youtube", "Request failed. Check the server is running and try again.");
+      setHint("hint-youtube", "YouTube communication error.");
       renderGrid(document.getElementById("ytGrid"), [], "youtube");
     }
   }
 
   function refreshAll() {
     saveTopics();
+    updateMlKeywords();
     loadGoogle();
     loadTv();
     loadWiki();
@@ -642,7 +738,7 @@
     loadYoutube();
   }
 
-  const DASH_CARD_COLLAPSE_MS = 380;
+  const DASH_CARD_COLLAPSE_MS = 400;
 
   function resizeVisibleCharts() {
     Object.keys(charts).forEach((k) => {
@@ -721,6 +817,32 @@
     document.getElementById("ytMode")?.addEventListener("change", () => {
       syncYtPresetWrap();
       loadYoutube();
+    });
+
+    // ML Predictor Hooks
+    document.getElementById("runMlPredictor")?.addEventListener("click", runPrediction);
+    
+    // Background snapshot run triggered by Retrain
+    document.getElementById("refreshMlPredictor")?.addEventListener("click", async () => {
+      const btn = document.getElementById("refreshMlPredictor");
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Snapshot in Progress...";
+      try {
+        const res = await fetch("/api/snapshots/run_google", { method: "POST" });
+        if (res.ok) {
+          const data = await res.json();
+          alert(`Successfully executed Google Snapshot (ID: ${data.snapshot_id}). Note: To update ML models on this new snapshot data, run "python -m src.ml.train_google_spike" in your system terminal.`);
+          updateMlKeywords();
+        } else {
+          alert("Could not start background snapshot run.");
+        }
+      } catch {
+        alert("Server communication error.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
     });
 
     document.querySelectorAll(".fmt-select").forEach((sel) => {
