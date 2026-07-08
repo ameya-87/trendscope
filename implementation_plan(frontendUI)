@@ -1,0 +1,56 @@
+# Implementation Plan - Premium Modern Frontend Dashboard
+
+Enhance the TrendScope user interface by transforming it into a high-end, premium data intelligence dashboard. We will implement modern visual design patterns (glassmorphism, vibrant gradients, premium typography, micro-interactions) and integrate the machine learning prediction endpoints into the frontend.
+
+## User Review Required
+
+> [!IMPORTANT]
+> The updated layout will introduce a new **Machine Learning Trend Predictor** widget on the frontend. This widget calls `/api/predictions/google_spike` for keywords. Make sure the backend server is running and models are trained for the active keywords to see real probabilities (it will fall back gracefully to a message/error if models aren't trained).
+
+## Proposed Changes
+
+We will overhaul the CSS design tokens, HTML structure, and JS logic to implement a premium aesthetic without adding external frameworks, keeping performance high and code maintenance clean.
+
+---
+
+### Frontend Components
+
+#### [MODIFY] [style.css](file:///d:/Ameya/Projects/TrendScope/frontend/style.css)
+- **Design Tokens**: Replace standard colors with custom dark gradients (deep space obsidian, cyber purple, neon cyan, glowing pink) and premium typography (Outfit + Plus Jakarta Sans).
+- **Glassmorphism CSS**: Define global cards with `backdrop-filter: blur(24px)`, high-contrast borders (`rgba(255,255,255,0.06)`), and heavy glowing shadows.
+- **Card Expansion Animations**: Refine card expansion transitions to feel extremely fluid. Add custom animations for expansion icons.
+- **Glowing LED Badges**: Design a state-of-the-art status indicator with pulse animations to monitor API statuses.
+- **Interactive Prediction Widget styling**: Add dial meters, percentage charts, and warning alerts for when ML models are missing.
+
+#### [MODIFY] [index.html](file:///d:/Ameya/Projects/TrendScope/frontend/index.html)
+- **Google Fonts Import**: Include "Outfit" for headers and "Plus Jakarta Sans" for UI controls/content.
+- **Modern Sidebar & Header Layout**: Structure the sidebar to look like a high-end command console. Include unified navigation and system health check status buttons.
+- **Global Control Center**: Rework "Your trend topics" into a prominent, glass-panel control card.
+- **[NEW] ML Prediction Visualizer Panel**: Add a new dashboard card dedicated to "ML Trend Spike Predictor" where users can input/select a topic and view calculated spike probabilities.
+
+#### [MODIFY] [script.js](file:///d:/Ameya/Projects/TrendScope/frontend/script.js)
+- **Advanced Chart Styling**: Customize Chart.js configurations to draw smooth cubic bezier curves, gradient fills under trend lines, and custom tooltips.
+- **ML Predictor Logic**:
+  - Implement dynamic fetching of `/api/predictions/google_spike` for current keywords.
+  - Render an interactive dial/progress bar showing the probability of a momentum spike.
+  - Implement friendly loading and error/fallback states if models aren't trained yet.
+- **Animations & UI Logic**: Add support for expanding all panels with clean delay effects.
+
+#### [MODIFY] [three_animation.js](file:///d:/Ameya/Projects/TrendScope/frontend/three_animation.js)
+- **Enhanced Visuals**: Style the spheres and toruses to use glowing materials (`MeshStandardMaterial` with roughness and metalness) and adjust the scene light to fit a cyberpunk deep space aesthetic.
+
+---
+
+## Verification Plan
+
+### Manual Verification
+1. **Visual Inspection**:
+   - Start the FastAPI server locally: `uvicorn src.api.main:app --reload --host 127.0.0.1 --port 5000`
+   - Open browser subagent or manual browser at `http://127.0.0.1:5000/`.
+   - Verify UI layout, glassmorphic blur intensity, responsiveness, and typography.
+2. **Interactive Elements**:
+   - Expand and collapse cards to test smooth transitions.
+   - Enter new topics and click "Apply & refresh all" to confirm data updates.
+   - Toggle formats between Bar, Horizontal Bar, Donut, and Table.
+3. **ML Prediction Panel**:
+   - Enter a keyword, hit Predict, and verify it returns predicted spike probabilities or displays a neat tutorial/setup message when models are missing.
