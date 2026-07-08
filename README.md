@@ -1,115 +1,161 @@
-TrendScope
+# 🌌 TrendScope
 
-Overview
-TrendScope collects, analyzes, and visualizes online trend signals. It ingests Google Trends, TVMaze, Wikipedia (pageviews), Hacker News, TMDB, CoinGecko, and YouTube (Data API), computes momentum for search trends, serves a web UI and REST API (FastAPI), and exports CSVs for Power BI.
+> **Cross-Platform Trend Intelligence & Predictive Momentum Engine**
 
-Problem Statement
-Trend signals are scattered across sources. TrendScope provides a single pipeline to ingest, normalize, score, and expose trends for analytics and dashboards.
+TrendScope is an enterprise-grade trend discovery and forecasting platform. It ingests scattered attention signals from multiple APIs (Google Trends, YouTube, Wikipedia, Hacker News, TMDB, TVMaze, CoinGecko), computes search momentum, stores historical snapshot records in a SQLite database, builds machine learning prediction models to forecast trend spikes, and visualizes them on a premium interactive dashboard.
 
-Goals
-- Unified pipeline for multiple data sources
-- Clear momentum scoring and lightweight visualization
-- Ready for Power BI and future ML forecasting
+---
 
-Features
-- Ingestion: Google Trends, TVMaze, Wikipedia, Hacker News, TMDB, CoinGecko, YouTube (Twitter/Reddit stubs)
-- Processing: momentum and trend direction (Google)
-- API: FastAPI JSON endpoints (+ health + status)
-- Frontend: Chart.js + Three.js dashboards
-- Exports: Power BI-ready CSVs
+## 🚀 Key Features
 
-Architecture
-- Scraping: src/scraping/*_scraper.py and related modules
-- Analysis: src/analysis (trend detection, topic modeling stubs)
-- API: FastAPI in src/api/main.py; static UI from frontend/
-- Visualization: reports/figures/*.svg
-- Dashboard exports: reports/powerbi/*.csv
+* **Multi-Source Ingestion Engine**: Built-in scrapers and API integration layers for:
+  - **Google Trends** (search interest time-series via `pytrends`)
+  - **YouTube Data API v3** (viral trends and query-based search rankings)
+  - **Wikimedia API** (real-time Wikipedia article pageview metrics)
+  - **Hacker News** (developer interest & technology discovery tracker)
+  - **CoinGecko** (trending cryptocurrencies, ranks, and market search metrics)
+  - **TMDB & TVMaze** (global entertainment trend indicators)
+* **Momentum Analytics Pipeline**: Normalizes raw data, converts wide format datasets to long, and computes trend direction and mathematical momentum ($Momentum_t = Value_{latest} - Value_{baseline}$).
+* **Predictive ML Spike Classifier**: Trains localized `Scikit-Learn` Logistic Regression models to predict the probability of trend momentum spiking in subsequent snapshot windows.
+* **Premium Dashboard UI**: Custom glassmorphism dark-theme command console built with **Three.js** (3D particle visualization), **Chart.js** (dynamic trend views), and **System Health LEDs** for monitoring API configurations.
+* **BI Export Utility**: Automatically generates clean, relational CSV datasets optimized directly for Power BI dashboard consumption.
 
-Tech Stack (rationale)
-- Python + Pandas for ETL/analytics
-- FastAPI + Uvicorn for API and static file hosting
-- PyTrends, Requests for data sources
-- Google API client for YouTube Data API v3
-- Matplotlib/Chart.js for quick visuals
+---
 
-Installation
-1) Python 3.11+
-2) Create venv and install deps:
-   - python -m venv venv
-   - venv\Scripts\activate
-   - pip install -r requirements.txt
-3) Copy .env.example to .env and set values (see below)
+## 🏗️ System Architecture
 
-Configuration (.env)
-- KEYWORDS="AI, Bitcoin, Climate Change"
-- ENABLE_YOUTUBE=1, ENABLE_WIKIPEDIA=1, ENABLE_HACKERNEWS=1, ENABLE_TMDB=1, ENABLE_COINGECKO=1
-- YOUTUBE_API_KEY= (YouTube Data API v3)
-- TMDB_API_KEY= (free key from themoviedb.org)
-- TWITTER_BEARER_TOKEN=, REDDIT_* (optional; pipeline stubs)
-Note: Env vars are read from the OS. In PowerShell, set with: $env:KEYWORDS="AI, Bitcoin".
+```mermaid
+graph TD
+    A[External APIs: Google, YouTube, Wiki, CoinGecko, HN, TMDB] -->|Scrapers / Ingestion| B(Data Ingestion Pipeline)
+    B -->|Raw CSVs| C[data/raw/]
+    C -->|Orchestrated Snapshots| D(SQLite Database:snapshots_db)
+    D -->|Feature Engineering| E(Scikit-Learn ML Models)
+    D -->|Momentum Processor| F(Analysis & Processing)
+    E -->|Predictions| G(FastAPI REST Backend)
+    F -->|Processed CSVs| G
+    G -->|High-Performance API| H(Premium Dashboard Frontend)
+    F -->|Power BI Export| I[Power BI Reports]
+```
 
-Quick Start
-- Run pipeline (optional, seeds data/raw):
-  python src\run_pipeline.py
-- Start API (dev):
-  python -m uvicorn src.api.main:app --reload --host 127.0.0.1 --port 5000
-- Open UI:
-  http://127.0.0.1:5000/
+---
 
-Deployment
-- Production-style:
-  python -m uvicorn src.api.main:app --host 0.0.0.0 --port 5000 --workers 2
+## 🛠️ Tech Stack & Engineering Rationale
 
-API Endpoints
-- GET /api/health
-- GET /api/status (which API keys / toggles are active)
-- GET /api/google_presets
-- GET /api/google_trends?preset=Tech&timeframe=now 7-d&geo=&lookback=4
-- GET /api/trends_momentum (processed CSV, or computed from latest google_trends_*.csv)
-- GET /api/social_posts (latest reddit_*.csv)
-- GET /api/tv_trends (TVMaze; fetches live if no CSV in data/raw)
-- GET /api/wiki_trends?limit=30
-- GET /api/hn_trends?limit=30
-- GET /api/movie_trends?kind=movie|tv&limit=20 (TMDB; needs TMDB_API_KEY)
-- GET /api/crypto_trends?limit=15
-- GET /api/youtube_trends?mode=trending|search&region=US&max_results=25&preset=Tech&days=7 (needs YOUTUBE_API_KEY)
+| Technology | Role | Rationale |
+| :--- | :--- | :--- |
+| **Python 3.11+** | Backend Core | Best-in-class ecosystem for data engineering, API integration, and machine learning. |
+| **FastAPI** | REST API Service | Asynchronous, auto-documented (OpenAPI/Swagger), extremely fast, and lightweight. |
+| **Pandas / NumPy** | Data Analysis & ETL | High-performance numerical data structures for reshaping, cleaning, and aggregating time-series data. |
+| **SQLite** | Snapshot Storage | Serverless SQL engine providing relational querying for historical model training inputs. |
+| **Scikit-Learn** | Predictive Modeling | Used for baseline model training, evaluations, and probability inference loops. |
+| **Three.js / WebGL** | 3D Visualization | Drives the background data-particle graphics to create an immersive, futuristic dashboard theme. |
+| **Chart.js** | Interactive Charting | Clean, canvas-based responsive plotting to visualize multidimensional trend statistics. |
 
-Frontend usage
-- Served at /. Use controls per panel; TMDB and YouTube need keys in .env for non-empty data.
+---
 
-Data attribution
-- Wikipedia pageviews: Wikimedia REST API; data under CC BY-SA / applicable Wikimedia terms.
-- TMDB: This product uses the TMDB API but is not endorsed or certified by TMDB.
-- CoinGecko: follow https://www.coingecko.com/en/api/terms
-- YouTube: YouTube Data API; subject to Google API terms of service.
-- TVMaze: TVMaze API.
+## 📂 Project Structure
 
-Power BI exports
-- Generate CSVs:
-  python -m src.dashboard.powerbi_export
-- Outputs to reports/powerbi/
+```
+TrendScope/
+├── data/                    # SQLite databases and snapshot archives
+│   ├── raw/                 # Ingested JSON/CSV datasets from third-party APIs
+│   └── processed/           # Normalized datasets with computed momentum
+├── frontend/                # Glassmorphic web client
+│   ├── index.html           # Command console layout and structure
+│   ├── style.css            # Custom CSS styles, glassmorphism theme, & LED animations
+│   ├── script.js            # UI logic, chart rendering, and ML dial controller
+│   └── three_animation.js   # Background particle systems (WebGL)
+├── reports/                 # Exported reports and saved model files
+│   ├── figures/             # Auto-generated SVG momentum charts
+│   ├── powerbi/             # Relational CSV exports optimized for Power BI
+│   └── predictions/         # Serialized ML models (.joblib files)
+├── src/                     # Core backend codebase
+│   ├── analysis/            # Analytical helpers and trend indicators
+│   ├── api/                 # FastAPI routes, middlewares, and startup scripts
+│   ├── config/              # Global settings and environment loading configurations
+│   ├── dashboard/           # Power BI ETL processor
+│   ├── ml/                  # Machine learning classifier architectures
+│   ├── pipeline/            # Automated snapshot runs and ingestion schedulers
+│   ├── scraping/            # API integration modules and HTTP requests
+│   └── storage/             # SQLite connection adapters
+├── .gitignore               # Configured to exclude system directories (like virtualenvs)
+├── requirements.txt         # Project package dependencies
+└── README.md                # Platform documentation
+```
 
-Troubleshooting
-- No Google data: check internet and pytrends; try /api/google_trends; ensure keywords are valid.
-- Empty Wikipedia: API may lag; the scraper retries older UTC dates automatically.
-- TMDB/YouTube empty: set TMDB_API_KEY and YOUTUBE_API_KEY.
-- TVMaze 429: retry later; reduce refresh frequency.
-- Port in use: change the port in the uvicorn command.
+---
 
-Roadmap
-- Platforms: deeper Twitter/Reddit/Instagram when keys and policies allow
-- ML: topic modeling (BERTopic/spaCy/LDA), forecasting (Prophet/ARIMA/XGBoost/transformers), anomaly/early-signal detection.
+## ⚙️ Installation & Setup
 
-References
-- Figures: reports/figures/*.svg
-- Data: data/raw and data/processed
-- Notes: reports/roadmap.md
+### 1. Prerequisites
+Ensure you have **Python 3.11+** installed on your system.
 
-Contributing
-- Fork and open PRs; ensure code compiles by running: python -m compileall -q src.
+### 2. Configure Environment
+1. Clone the repository and navigate to the project root.
+2. Initialize and activate a Python virtual environment:
+   ```bash
+   python -m venv venv
+   # On Windows (Command Prompt / PowerShell):
+   venv\Scripts\activate
+   # On macOS / Linux:
+   source venv/bin/activate
+   ```
+3. Install the project package dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Configure application variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Open the `.env` file and set the required API keys (e.g., `YOUTUBE_API_KEY`, `TMDB_API_KEY`) and customize the default keywords to target (e.g., `KEYWORDS="AI, Bitcoin, Climate Change"`).
 
-License
-- MIT License. See LICENSE for details.
+---
 
-CI
-- GitHub Actions runs a basic syntax validation on each push and PR.
+## ⚡ Quick Start
+
+### 1. Execute Snapshot Pipeline
+Run the command-line entrypoint to fetch trends, compute momentum, save a database snapshot, and export reports:
+```bash
+python src/run_pipeline.py
+```
+
+### 2. Train Spike Predictor Models
+Train the baseline machine learning classifiers for your target keywords:
+```bash
+python -m src.ml.train_google_spike
+```
+
+### 3. Launch Development Server
+Start the Uvicorn-based FastAPI server locally:
+```bash
+python -m uvicorn src.api.main:app --reload --host 127.0.0.1 --port 5000
+```
+Open **[http://127.0.0.1:5000/](http://127.0.0.1:5000/)** in your web browser to access the premium command console.
+
+---
+
+## 📡 API Reference Endpoints
+
+| Method | Endpoint | Query Parameters | Description |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/health` | None | Returns backend status and system timestamp. |
+| **GET** | `/api/status` | None | Returns configuration boolean checks for third-party APIs. |
+| **GET** | `/api/google_trends` | `keywords`, `preset`, `timeframe`, `geo` | Dynamically fetches Google Trends and calculates momentum. |
+| **POST** | `/api/snapshots/run_google` | `keywords`, `timeframe`, `lookback` | Manually triggers a snapshot run and stores results in SQLite. |
+| **GET** | `/api/predictions/google_spike` | `keyword`, `delta` | Infers and returns the spike probability for a given keyword. |
+| **GET** | `/api/tv_trends` | `topics` | Fetches popular TV series matched against key topics. |
+| **GET** | `/api/wiki_trends` | `topics`, `limit` | Returns top Wikipedia pageviews filtered by keyword queries. |
+| **GET** | `/api/hn_trends` | `topics`, `limit` | Returns Hacker News frontpage posts filtered against topics. |
+| **GET** | `/api/movie_trends` | `kind`, `topics`, `limit` | Merges TMDB trending and search categories by keywords. |
+| **GET** | `/api/crypto_trends` | `topics`, `limit` | Combines CoinGecko trending and interest coins. |
+| **GET** | `/api/youtube_trends` | `mode`, `region`, `keywords`, `limit` | Retrieves trending regional videos or search term rankings. |
+
+---
+
+## 🔮 Engineering Roadmap
+
+- [ ] **Advanced Ingestion Scheduling**: Integrate `APScheduler` directly into FastAPI for automated background snapshot tasks.
+- [ ] **Multi-Platform Model Variables**: Expand SQL storage models and ML features to include signals from YouTube velocity and Wikipedia pageviews.
+- [ ] **Next-Gen Forecasting**: Incorporate time-series forecasting models using Prophet and LSTM architectures to predict trend thresholds.
+- [ ] **Dockerization**: Create a multi-stage Docker build config for simple containerized deployments.
